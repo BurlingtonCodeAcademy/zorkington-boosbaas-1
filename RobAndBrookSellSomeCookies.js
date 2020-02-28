@@ -23,16 +23,13 @@ const min = 0;
 
 //--------------------------Classes Initialization -------------------------------
 class Room {
-    constructor(title, descript, inventory, north, south, east, west, sign, locked) {
+    constructor(title, descript, inventory, human, sign, locked) {
         this.title = title || 'the title of the room'
         this.descript = descript || 'a basic room'
         this.inventory = inventory || []
-        this.north = north || null
-        this.south = south || null
-        this.east = east || null
-        this.west = west || null
+        this.human = human
         this.sign = sign
-        this.locked = false
+        this.locked = locked
     }
 }
 //end of Room class construct -------------------beginning of Inventory class
@@ -41,34 +38,25 @@ class Inventory {
         this.item = item || 'It\'s like, one of those thingamabobbers that you used to get in cereal boxes.'
         this.description = description || 'It\'s a thing only a mother could love.'
         this.isPortable = isPortable || true
-        this.placeToHoldThings = []
-        this.value = value || 0 //if someobdy offers to trade for a box of cookies, is it worth it?
+        this.placeToHoldThings = placeToHoldThings[]
+        this.value = value || 0 //if somebody offers to trade for a box of cookies, is it worth it?
     }
 
 }
 //end of Inventory class construct ------------------- beginning of Cookie class
 
 class IsCookie {
-    constructor(item, cost, description, isPortable, texture, shape, numberInBox, initialInventory, glutenFree, organic, gmoFree) {
+    constructor(item, cost, description, boxCount) {
         this.name = item || 'cookie'
-        this.cost = 5
-        this.flavor = description || 'way too sweet'
-        this.texture = texture || 'like stale cardboard'
-        this.shape = shape || 'an amorphous blob'
-        this.numberInBox = numberInBox || 0
-        this.initialInventory = initialInventory // how many boxes girl scout starts with
-        this.glutenFree = glutenFree || false
-        this.organic = organic || false
-        this.gmoFree = gmoFree || false
+        this.cost = cost
+        this.description = description
+        this.boxCount = boxCount
     }
-
-
-
 }
 
 //------end of Cookie class construct ------------------- beginning of Human class
 
-class Characters {
+class Human {
     constructor(firstName, description, health, age, inventory, currentRoom) {
         this.firstName = firstName || ''
         this.description = description || 'one of the finest in the land'
@@ -77,35 +65,6 @@ class Characters {
         this.age = age || 'Older than the girl scout'
         this.inventory = inventory || []//POTENTIAL TO SET MAX NUMBER THINGS CAN CARRY
         this.currentRoom = currentRoom || foyer
-    }
-    outcomeGenerator(min, max) {
-
-        this.max = 10
-        outcome = parseInt(Math.floor(Math.random() * (max - min + 1)) + min)
-        {
-            if (outcome > 7) {
-                return true //this means action will happen
-            } else if (outcome <= 7) {
-                return false
-            }
-        }
-    }
-
-    healthStatus() {
-        if (this.currentHealth === 0) {
-            console.log('You died')
-        }
-        console.log('you\'re still alive ' + this.currentHealth)
-    }
-
-
-}
-
-
-class Human extends Characters {
-    constructor(firstName, description, initialHealth, currentHealth, inventory, age, currentRoom, hasGender) {
-        super(firstName, description, 10, currentHealth, age, inventory, currentRoom)
-        this.hasGender = hasGender
     }
     howManyBoxes() {
         let min = 1
@@ -124,26 +83,27 @@ class Human extends Characters {
         console.log("You have picked up the " + item)
     }
 
-}
+    outcomeGenerator(min, max) {
+        this.max = 10
+        outcome = parseInt(Math.floor(Math.random() * (max - min + 1)) + min)
+        {
+            if (outcome > 7) {
+                return true //this means action will happen
+            } else if (outcome <= 7) {
+                return false
+            }
+        }
+    }
 
-//****end Characters begin Furniture and Office Supplies */
-class Furniture extends Inventory {
-    constructor(item, description, isPortable, isEdible, isHuman, isStuff, value, isOpen, conductsElectricity) {
-        super(item, description, isPortable, false, false, '', '')
-        this.isOpen = isOpen || false
-        this.conductsElectricity = conductsElectricity || false
+    healthStatus() {
+        if (this.currentHealth === 0) {
+            console.log('You died')
+        }
+        console.log('you\'re still alive ' + this.currentHealth)
     }
 }
 
-class Supplies extends Inventory {
-    constructor(item, description, isPortable, isEdible, isHuman, isStuff, value, isFlammable) {
-        super(item, description, true, isEdible, false, '', '')
-        this.isFlammable = isFlammable || false
 
-    }
-
-
-}
 //----------------------Constructors---------------------------------------
 
 //****STUFF */
@@ -175,11 +135,11 @@ const hillFarmer = new IsCookie('Hill Farmer', 'maple oatmeal', 'crunchy', 'lacy
 const samoas = new IsCookie('Samoas', 'caramel and toasted coconut-covered cookies', 'crisp and chewy', 'round', 14, 20)
 const montpeculiar = new IsCookie('Montpeculiar', 'sweet and grassy, cbd, hemp and date cookies will remind you of rolling down a hill on a warm summer day', '', '', 'more than 8 fewer than 14', '', true, true, true)
 
-//****CHARACTERS */
+//**Humans  (firstName, description, health, age, inventory, currentRoom)
 const girlScout = {
     name: '',
-    inventory: [],
-    currentRoom: foyer,
+    inventory: ['pens', 'cash'],
+    currentRoom: street,
     initialHealth: 10,
     boxesSold: 0,
 
@@ -192,14 +152,7 @@ const girlScout = {
         this.inventory.push(item)
         console.log("You have picked up the " + item)
     },
-
-
-    //lookAround(currentRoom) {
-    //  return this.currentRoom.description
-    //},
-
     remainingBoxes() {
-
         remainingBoxes = this.howManyBoxes - boxesSold;
         if (boxesSold > this.howManyBoxes) {
             return 'Oh, I\'m sorry, I only have ' + this.howManyBoxes + ' left.'
@@ -209,13 +162,15 @@ const girlScout = {
 
     }
 }
+// Other humans (firstName, description, health, age, inventory, currentRoom)
 const securityOfficer = new Human('Tony', 'a crippled ex-meter reader, he has a visceral dislike of young men in baseball caps', 10, [])
-const employee1 = new Human('Mr.')
-const employee2 = new Human('Ms.')
-const employee3 = new Human('Mr.')
-const employee4 = new Human('Ms.')
+const nectarsEmployee = new Human('Mr.')
+const trumpEmployee = new Human('Ms.')
+const asureEmployee = new Human('Mr.')
+const trumpEmployeeTwo = new Human('Ms.')
 
 //-------------------Lookup tables
+const commands = ['i', 'go', 'move', 'yes', 'no', 'look', 'pick up', 'get', 'speak', 'ask', 'open']
 
 const obCookies = {
     'thin mint': thinMint,
@@ -228,50 +183,29 @@ const obCookies = {
     'montpelier': montpeculiar
 }
 
+let states = {
+    street: { canChangeTo: ['foyer'] },
+    foyer: { canChangeTo: ['street', 'stairs', 'elevator', 'nectars'] },
+    stairs: { canChangeTo: ['foyer', 'thirdFloor', 'secondFloor'] },
+    elevator: { canChangeTo: ['foyer', 'thirdFloor', 'secondFloor'] },
+    secondFloor: { canChangeTo: ['elevator', 'stairs', 'trumCodeAcademy', 'asureSoftware'] },
+    nectars: { canChangeTo: ['foyer'] },
+    trumpCodeAcademy: { canChangeTo: ['secondFloor'] },
+    asureSoftware: { canChangeTo: ['secondFloor'] },
+    thirdFloor: { canChangeTo: ["roof"] }
+}
 
- /*const commands = {
-     "yes": yes,
-     "no": no,
-     "go": move,
-     "move": move,
-     "look": look,
-     "see": look,
-     "pick up": pickup,
-     "pickup": pickup,
-     "get": pickup,
-     "drop": drop,
-     "unlock": unlock,
-     "speak": speak,
-     "ask": speak,
-     "show": show
- } */
-
-
- let states = {
-     street: { canChangeTo: ['foyer'] },
-     foyer: { canChangeTo: ['street', 'stairs', 'elevator', 'nectars'] },
-     stairs: { canChangeTo: ['foyer', 'thirdFloor', 'secondFloor'] },
-     elevator: { canChangeTo: ['foyer', 'thirdFloor', 'secondFloor'] },
-     secondFloor: { canChangeTo: ['elevator', 'stairs', 'trumCodeAcademy', 'asureSoftware'] },
-     nectars: { canChangeTo: ['foyer'] },
-     trumpCodeAcademy: { canChangeTo: ['secondFloor'] },
-     asureSoftware: { canChangeTo: ['secondFloor'] },
-     thirdFloor: { canChangeTo: ["roof"] }
- }
-
-
-
- let roomLookup = {
-     'street': street,
-     'foyer': foyer,
-     'stair': stairs,
-     'stairs': stairs,
-     'elevator': elevator,
-     'secondFloor': secondFloor,
-     'second floor': secondFloor,
-     'secondfloor': secondFloor,
-     'asure software': asureSoftware,
-     'trump': trumpCodeAcademy,
+let roomLookup = {
+    'street': street,
+    'foyer': foyer,
+    'stair': stairs,
+    'stairs': stairs,
+    'elevator': elevator,
+    'secondFloor': secondFloor,
+    'second floor': secondFloor,
+    'secondfloor': secondFloor,
+    'asure software': asureSoftware,
+    'trump': trumpCodeAcademy,
     'trump code': trumpCodeAcademy,
     'trump code academy': trumpCodeAcademy,
     'nectar': nectars,
@@ -284,14 +218,12 @@ const obCookies = {
 let currentState = 'street' //sets room location 
 let currentRoom = roomLookup[currentState] //for updating room location
 
-
-
 async function startGame() {
+    console.log("Hello. Welcome to Cookie Challenge. \nTo win the game you need to sell 25 or more boxes.\nTo check how many you've sold, type [i]\nTo move around use [move][direction].\n")
+    console.log("The other commands you will need are 'yes', 'no', 'look' to see what\'s \nin your immediate surroundings, 'get' to pick up an item,'drop' to drop it.\n")
+    console.log("'unlock' opens things, 'speak' allows you to interact with another character and finally 'show'");
     girlScout.firstName = await ask("What is your name? \n>_")
     console.log("Hello " + girlScout.firstName + " \n")
-    console.log("You are selling girl scout cookies. \nTo win the game you need to sell 25 or more boxes.\nTo check how many you've sold, type [i]\nTo move around use [move][direction]")
-    console.log('the other commands you will need are "yes", "no", "look" to see what\'s in your immediate surroundings, "get" to pickup an item,"drop" to drop it. ' +
-        '"unlock" opens things, "speak" allows you to interact with another character and finally "show"')
 
     let init = await ask("Are you ready to start?\n>_")
     init.toLowerCase()
